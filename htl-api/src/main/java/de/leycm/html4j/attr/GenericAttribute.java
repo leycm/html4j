@@ -1,9 +1,14 @@
 package de.leycm.html4j.attr;
 
-import de.leycm.html4j.dom.Attribute;
-import lombok.NonNull;
 
-public record GenericAttribute(@NonNull String name,
-                               @NonNull String value)
-        implements Attribute {
+import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
+
+public class GenericAttribute extends HtmlAttribute<String> {
+
+    public GenericAttribute(@NonNull String name,
+                            @Nullable String value) {
+        super(name, value);
+    }
+
 }

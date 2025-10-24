@@ -1,4 +1,4 @@
-package de.leycm.html4j.dom;
+package de.leycm.html4j.css;
 
 import de.leycm.html4j.util.StyleAttribute;
 import lombok.NonNull;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * @see <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Properties_Reference">
  *      MDN CSS Properties Reference</a>
  */
-public interface Style {
+public interface Style<T> {
 
     /**
      * Returns the CSS property name.
@@ -28,7 +28,14 @@ public interface Style {
      *
      * @return the property value, or {@code null} if not set
      */
-    @Nullable String value();
+    @Nullable T value();
+
+    /**
+     * Returns the CSS property value.
+     *
+     * @return the property value, or {@code null} if not set
+     */
+    @NonNull String string();
 
     /**
      * Converts this style to its CSS string representation.
@@ -36,7 +43,7 @@ public interface Style {
      * @return CSS declaration string in format: {@code name: value;}
      */
     default @NonNull String toHtml() {
-        String val = value();
-        return val != null ? name() + ":" + val + ";" : "";
+        String val = string();
+        return name() + ":" + val + ";";
     }
 }

@@ -1,6 +1,7 @@
-package de.leycm.html4j.dom;
+package de.leycm.html4j.attr;
 
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  * @see <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes">
  *      MDN HTML Attribute Reference</a>
  */
-public interface Attribute {
+public interface Attribute<T> {
 
     /**
      * Returns the attribute name.
@@ -26,7 +27,14 @@ public interface Attribute {
      *
      * @return the attribute value
      */
-    @Nullable String value();
+    @Nullable T value();
+
+    /**
+     * Returns the attribute value as String.
+     *
+     * @return the attribute value as String
+     */
+    @NotNull String string();
 
     /**
      * Converts this attribute to its HTML string representation.
@@ -37,8 +45,8 @@ public interface Attribute {
      * @return HTML attribute string
      */
     default @NonNull String toHtml() {
-        String val = value();
-        return val != null ? name() + "=\"" + escapeHtml(val) + "\"" : name();
+        String val = string();
+        return name() + "=\"" + escapeHtml(val) + "\"";
     }
 
     /**

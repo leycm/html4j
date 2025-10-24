@@ -1,25 +1,42 @@
 package de.leycm.html4j.util;
 
-import de.leycm.html4j.dom.Attribute;
+import de.leycm.html4j.attr.Attribute;
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-
-public class ClassAttribute implements Attribute {
+@SuppressWarnings("UnusedReturnValue")
+public class ClassAttribute implements Attribute<String> {
 
     protected final List<String> classes = new ArrayList<>();
 
     @NonNull
     public ClassAttribute addClass(@NonNull String clazz) {
-        classes.add(clazz);
+        if (!hasClass(clazz)) classes.add(clazz);
         return this;
     }
 
     @NonNull
-    public ClassAttribute addClass(@NonNull String... clazz) {
-        classes.addAll(Arrays.stream(clazz).toList());
+    public ClassAttribute addClass(@NonNull String @NonNull ... clazz) {
+        for (String c : clazz) addClass(c);
+        return this;
+    }
+
+    @NonNull
+    public ClassAttribute removeClass(@NonNull String clazz) {
+        classes.removeIf(s -> s.equalsIgnoreCase(clazz));
+        return this;
+    }
+
+    @NonNull
+    public ClassAttribute removeClass(@NonNull String @NonNull ... clazz) {
+        for (String c : clazz) removeClass(c);
+        return this;
+    }
+
+    @NonNull
+    public ClassAttribute clear() {
+        classes.clear();
         return this;
     }
 
@@ -39,7 +56,7 @@ public class ClassAttribute implements Attribute {
     }
 
     @Override
-    public @NotNull String name() {
+    public @NonNull String name() {
         return "class";
     }
 
@@ -48,4 +65,8 @@ public class ClassAttribute implements Attribute {
         return String.join(" ", classes);
     }
 
+    @Override
+    public @NonNull String string() {
+        return value();
+    }
 }

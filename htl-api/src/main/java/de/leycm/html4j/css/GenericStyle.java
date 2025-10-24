@@ -1,9 +1,11 @@
 package de.leycm.html4j.css;
 
-import de.leycm.html4j.dom.Style;
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
-public record GenericStyle(@NonNull String name,
-                           @NonNull String value)
-        implements Style {
+public class GenericStyle extends HtmlStyle<String> {
+    public GenericStyle(@NonNull String name,
+                        @Nullable String value) {
+        super(name, value);
+    }
 }

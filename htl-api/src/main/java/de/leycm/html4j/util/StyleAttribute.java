@@ -1,25 +1,44 @@
 package de.leycm.html4j.util;
 
-import de.leycm.html4j.dom.Attribute;
-import de.leycm.html4j.dom.Style;
+import de.leycm.html4j.attr.Attribute;
+import de.leycm.html4j.css.Style;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class StyleAttribute implements Attribute {
+@SuppressWarnings("UnusedReturnValue")
+public class StyleAttribute implements Attribute<String> {
 
-    protected final List<Style> styles = new ArrayList<>();
+    protected final List<Style<?>> styles = new ArrayList<>();
 
     @NonNull
-    public StyleAttribute addStyle(@NonNull Style style) {
-        styles.add(style);
+    public StyleAttribute addStyle(@NonNull Style<?> style) {
+        if (!hasStyle(style.name())) styles.add(style);
         return this;
     }
 
     @NonNull
-    public StyleAttribute addStyle(@NonNull Style... style) {
-        styles.addAll(Arrays.stream(style).toList());
+    public StyleAttribute addStyle(@NonNull Style<?> @NonNull ... style) {
+        for (Style<?> s : style) addStyle(s);
+        return this;
+    }
+
+    @NonNull
+    public StyleAttribute removeStyle(@NonNull String name) {
+        styles.removeIf(s -> s.name().equalsIgnoreCase(name));
+        return this;
+    }
+
+    @NonNull
+    public StyleAttribute removeStyle(@NonNull String @NonNull ... names) {
+        for (String n : names) removeStyle(n);
+        return this;
+    }
+
+    @NonNull
+    public StyleAttribute clear() {
+        styles.clear();
         return this;
     }
 
@@ -27,13 +46,15 @@ public class StyleAttribute implements Attribute {
         return getStyle(name) != null;
     }
 
-    public @Nullable Style getStyle(@NonNull String name) {
-        for (Style s : styles)
+    @Nullable
+    public Style<?> getStyle(@NonNull String name) {
+        for (Style<?> s : styles)
             if (s.name().equalsIgnoreCase(name)) return s;
         return null;
     }
 
-    public @NonNull List<Style> getStyles() {
+    @NonNull
+    public List<Style<?>> getStyles() {
         return new ArrayList<>(styles);
     }
 
@@ -43,11 +64,14 @@ public class StyleAttribute implements Attribute {
     }
 
     @Override
-    public String value() {
+    public @NonNull String value() {
         StringBuilder css = new StringBuilder();
-        styles.forEach(s -> css.append(s.toHtml())
-                .append(' '));
-        return css.toString();
+        styles.forEach(s -> css.append(s.toHtml()).append(" "));
+        return css.toString().trim();
     }
 
+    @Override
+    public @NonNull String string() {
+        return value();
+    }
 }
