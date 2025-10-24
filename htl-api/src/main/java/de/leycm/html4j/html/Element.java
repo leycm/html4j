@@ -1,11 +1,9 @@
 package de.leycm.html4j.html;
 
-import de.leycm.html4j.attr.Attribute;
-import de.leycm.html4j.attr.IdAttribute;
+import de.leycm.html4j.attr.*;
 import de.leycm.html4j.css.Style;
 import de.leycm.html4j.dom.Node;
-import de.leycm.html4j.util.ClassAttribute;
-import de.leycm.html4j.util.StyleAttribute;
+import de.leycm.html4j.util.*;
 import lombok.Getter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +26,7 @@ public class Element implements Node {
         this.tagName = tagName.toLowerCase(Locale.ROOT);
     }
 
-    // ---------- ATTRIBUTES ----------
+    // ============ ATTRIBUTES ============
     @NonNull
     public Element addAttribute(@NonNull Attribute<?> attribute) {
         if (attribute instanceof ClassAttribute cls) {
@@ -57,7 +55,7 @@ public class Element implements Node {
     }
 
     public boolean hasAttribute(@NonNull String name) {
-        if (name.equalsIgnoreCase("id")) return !idAttribute.getValue().isEmpty();
+        if (name.equalsIgnoreCase("id")) return !idAttribute.string().isEmpty();
         if (name.equalsIgnoreCase("class")) return !classAttribute.getClasses().isEmpty();
         if (name.equalsIgnoreCase("style")) return !styleAttribute.getStyles().isEmpty();
         return attributes.stream().anyMatch(a -> a.name().equalsIgnoreCase(name));
@@ -69,7 +67,7 @@ public class Element implements Node {
         return this;
     }
 
-    // ---------- CLASS ----------
+    // ============ CLASS ============
     @NonNull
     public Element addClass(@NonNull String... classes) {
         classAttribute.addClass(classes);
@@ -86,7 +84,7 @@ public class Element implements Node {
         return classAttribute.hasClass(cls);
     }
 
-    // ---------- STYLE ----------
+    // ============ STYLE ============
     @NonNull
     public Element addStyle(@NonNull Style<?>... styles) {
         styleAttribute.addStyle(styles);
@@ -103,7 +101,7 @@ public class Element implements Node {
         return styleAttribute.hasStyle(styleName);
     }
 
-    // ---------- CHILDREN ----------
+    // ============ CHILDREN ============
     @NonNull
     public Element append(@NonNull Node @NotNull ... nodes) {
         for (Node node : nodes) {
@@ -135,14 +133,14 @@ public class Element implements Node {
         return new ArrayList<>(children);
     }
 
-    // ---------- SELF CLOSING ----------
+    // ============ SELF CLOSING ============
     @NonNull
     public Element selfClosing() {
         this.selfClosing = true;
         return this;
     }
 
-    // ---------- HTML ----------
+    // ============ HTML ============
     @Override
     public @NonNull String toHtml(int indent) {
         StringBuilder sb = new StringBuilder();
@@ -152,7 +150,7 @@ public class Element implements Node {
         Set<Attribute<?>> merged = new LinkedHashSet<>(attributes);
         if (!classAttribute.getClasses().isEmpty()) merged.add(classAttribute);
         if (!styleAttribute.getStyles().isEmpty()) merged.add(styleAttribute);
-        if (!idAttribute.getValue().isEmpty()) merged.add(idAttribute);
+        if (!idAttribute.string().isEmpty()) merged.add(idAttribute);
 
         for (Attribute<?> attr : merged) {
             String val = attr.string();
