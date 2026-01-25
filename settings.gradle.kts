@@ -53,7 +53,5 @@ dependencyResolutionManagement {
 // ─────────────────────────────
 rootProject.name = "ley-html4j"
 
-include("api", "common")
-
-project(":api").projectDir = file("htl-api")
-project(":common").projectDir = file("htl-common")
+include("htmj")
+project(":htmj").projectDir = file("htmj")

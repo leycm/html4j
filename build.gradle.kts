@@ -37,7 +37,7 @@ allprojects {
         maven("https://libraries.minecraft.net")
         maven("https://repo.codemc.io/repository/maven-releases/")
         maven("https://repo.codemc.io/repository/maven-snapshots/")
-        maven("https://rubrionmc.github.io/repository/")
+        maven("https://leycm.github.io/repository/")
     }
 }
 
@@ -58,7 +58,14 @@ subprojects.forEach { sub ->
 //  ─────────────────────────────────────────────
 //  Sync root properties into all subprojects
 //  ─────────────────────────────────────────────
-rootProject.properties.forEach { (k, v) ->
+val rootProps = Properties().apply {
+    val file = rootProject.file("gradle.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+rootProps.forEach { (k, v) ->
     rootProject.extra[k.toString()] = v
     subprojects.forEach { sub -> sub.extra[k.toString()] = v }
 }
@@ -73,9 +80,16 @@ subprojects {
 
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(property("javaVersion").toString().toInt()))
+        withSourcesJar()
+        withJavadocJar()
     }
 
     tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+    }
+
+    tasks.withType<Javadoc> {
+        isFailOnError = false
         options.encoding = "UTF-8"
     }
 
@@ -115,6 +129,26 @@ subprojects {
                 groupId = project.group.toString()
                 artifactId = project.name
                 version = project.version.toString()
+
+                pom {
+                    name.set(project.name)
+                    description.set("Automatically published by LEYCM build system.")
+                    url.set("https://github.com/leycm")
+
+                    licenses {
+                        license {
+                            name.set("LECP License")
+                            url.set("https://github.com/leycm/leycm/blob/main/LICENSE")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("leycm")
+                            name.set("LeyCM")
+                            email.set("leycm@proton.me")
+                        }
+                    }
+                }
             }
         }
         repositories {
@@ -126,24 +160,18 @@ subprojects {
         }
     }
 
-    tasks.register("pushRepo") {
-        doLast {
-            println("Running push script in repository directory...")
-            val repoDir = rootProject.projectDir.parentFile.resolve("repository")
-            val script = repoDir.resolve("publish.sh")
+    tasks.register<Exec>("pushRepo") {
+        println("Running push script in repository directory...")
+        val repoDir = rootProject.projectDir.parentFile.resolve("repository")
+        val script = repoDir.resolve("publish.sh")
 
-            @Suppress("DEPRECATION")
-            exec {
-                workingDir = repoDir
-                commandLine("sh", script.absolutePath)
-            }
-        }
+        workingDir = repoDir
+        commandLine("sh", script.absolutePath)
     }
 
     tasks.named("publish") {
         finalizedBy("pushRepo")
     }
-
 }
 
 //  ─────────────────────────────────────────────
