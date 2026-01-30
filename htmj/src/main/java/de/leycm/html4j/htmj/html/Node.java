@@ -1,14 +1,13 @@
 package de.leycm.html4j.htmj.html;
 
-import de.leycm.html4j.htmj.render.RenderConfig;
+import org.jetbrains.annotations.NotNull;
 
-import lombok.NonNull;
+public interface Node extends Renderable,
+        Comparable<Node> {
 
-public interface Node {
-
-    @NonNull StringBuilder render(@NonNull RenderConfig config,
-                                  @NonNull StringBuilder out,
-                                  int indent
-    );
+    @Override
+    default int compareTo(@NotNull Node o) {
+        return this.toString().compareTo(o.toString());
+    }
 
 }

@@ -1,19 +1,18 @@
 package de.leycm.html4j.htmj.content;
 
-import de.leycm.html4j.htmj.render.RenderConfig;
-
+import de.leycm.html4j.htmj.render.RenderSystem;
 import lombok.NonNull;
 
 public final class EscapedText
         extends Text {
 
     public EscapedText(final @NonNull String content) {
-        this(RenderConfig.COMPACT, content);
+        this(RenderSystem.COMPACT, content);
     }
 
-    public EscapedText(final @NonNull RenderConfig config,
+    public EscapedText(final @NonNull RenderSystem system,
                        final @NonNull String content) {
-        super(config.escapeOf(content));
+        super(system.escape(content));
     }
 
 }

@@ -1,7 +1,6 @@
 package de.leycm.html4j.htmj.html;
 
-import de.leycm.html4j.htmj.render.RenderConfig;
-
+import de.leycm.html4j.htmj.render.RenderContext;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,11 +8,10 @@ public interface Content extends Node {
 
     String content();
 
-    default @NonNull StringBuilder render(
-            final @NonNull RenderConfig config,
-            final @NonNull StringBuilder out,
-            final int indent    ) {
-        return out.append(config.indentOf(indent)).append(content());
+    @Override
+    default @NonNull RenderContext render(final @NonNull RenderContext context, final int indent) {
+        context.appendIndent().append(this.content());
+        return context;
     }
 
     default boolean equals(final @Nullable Content other) {
