@@ -41,21 +41,36 @@ public class Containing implements Element {
             final @NonNull RenderContext context,
             final int indent
     ) {
+        boolean hasChildren = !children.isEmpty();
+        boolean isPretty = context.getSystem().isPrettyPrint();
+        boolean hasTextOnly = hasChildren && children.stream().allMatch(c -> c instanceof TextContent);
+        
+        // Opening tag with indentation
         context.appendIndent()
                .append('<').append(tag).append('>');
 
-        if (context.getSystem().isPrettyPrint() && !children.isEmpty()) {
-            context.appendLine();
-        }
-
-        for (Node child : children) {
-            child.render(context, indent + 1);
-        }
-
-        if (context.getSystem().isPrettyPrint() && !children.isEmpty()) {
-            context.appendIndent();
+        if (hasChildren) {
+            if (isPretty) {
+                context.appendLine();
+                
+                // Render children with proper indentation
+                for (Node child : children) {
+                    context.appendIndent().append("  "); // 2 spaces for child indentation
+                    child.render(context, indent + 1);
+                    context.appendLine();
+                }
+                
+                // Add closing tag with proper indentation
+                context.appendIndent();
+            } else {
+                // Compact mode - render all on one line
+                for (Node child : children) {
+                    child.render(context, 0);
+                }
+            }
         }
         
+        // Closing tag
         return context.append("</").append(tag).append('>');
     }
 

@@ -30,7 +30,9 @@ public class TextContent implements Content {
 
     @Override
     public @NonNull RenderContext render(@NonNull RenderContext context, int indent) {
-        context.appendIndent().append(content());
+        // Don't add extra indentation for text content
+        // Just append the content directly
+        context.append(content());
         return context;
     }
 }

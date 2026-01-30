@@ -4,6 +4,7 @@ import de.leycm.html4j.htmj.element.Containing;
 import de.leycm.html4j.htmj.element.SelfClosing;
 import de.leycm.html4j.htmj.element.TextContent;
 import de.leycm.html4j.htmj.html.Node;
+import de.leycm.html4j.htmj.render.RenderContext;
 import de.leycm.html4j.htmj.render.RenderSystem;
 
 public class Document {
@@ -20,8 +21,19 @@ public class Document {
     }
 
     public String render() {
-        return "<!DOCTYPE html>\n" + 
-               html.render(renderSystem.createContext(), 0).toString();
+        RenderContext context = renderSystem.createContext();
+        // Add DOCTYPE and start HTML
+        context.append("<!DOCTYPE html>").appendLine();
+        
+        // Render HTML with proper indentation
+        html.render(context, 0);
+        
+        // Ensure there's a final newline
+        if (renderSystem.isPrettyPrint()) {
+            context.appendLine();
+        }
+        
+        return context.toString();
     }
 
     @Override
@@ -31,7 +43,7 @@ public class Document {
 
     public static class DocumentBuilder {
         private Containing html;
-        private RenderSystem renderSystem = RenderSystem.PRETTY;
+        private final RenderSystem renderSystem = RenderSystem.PRETTY;
 
         public HeadBuilder head(String id, String classes) {
             Containing head = new Containing("head");
