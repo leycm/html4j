@@ -1,25 +1,16 @@
 package de.leycm.html4j.htmj.element;
 
 import de.leycm.html4j.htmj.html.Element;
-import de.leycm.html4j.htmj.render.RenderConfig;
 
+import de.leycm.html4j.htmj.render.RenderContext;
+import de.leycm.html4j.htmj.render.RenderSystem;
 import lombok.NonNull;
 
-public class SelfClosing implements Element {
+public abstract class SelfClosing implements Element {
     private final @NonNull String tag;
 
     public SelfClosing(final @NonNull String tag) {
         this.tag = tag;
-    }
-
-    @Override
-    public @NonNull StringBuilder render(
-            final @NonNull RenderConfig config,
-            final @NonNull StringBuilder out,
-            final int indent
-    ) {
-        out.append(config.indentOf(indent));
-        return config.voidTag(out, tag);
     }
 
     public @NonNull String getTag() {
@@ -28,9 +19,11 @@ public class SelfClosing implements Element {
 
     @Override
     public String toString() {
-        return render(RenderConfig.COMPACT,
-                new StringBuilder(), 0)
-                .toString();
+        return render(RenderSystem.COMPACT.createContext()).toString();
     }
 
+    @Override
+    public @NonNull RenderContext render(@NonNull RenderContext context) {
+        return context.appendIndent().append('<').append(tag).append(" />");
+    }
 }
