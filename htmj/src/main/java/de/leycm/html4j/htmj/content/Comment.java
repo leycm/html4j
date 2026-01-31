@@ -1,6 +1,5 @@
 package de.leycm.html4j.htmj.content;
 
-import de.leycm.html4j.htmj.html.Content;
 import de.leycm.html4j.htmj.render.RenderContext;
 import de.leycm.html4j.htmj.render.RenderSystem;
 import lombok.NonNull;

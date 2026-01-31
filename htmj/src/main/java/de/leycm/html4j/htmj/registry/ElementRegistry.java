@@ -15,13 +15,13 @@ public final class ElementRegistry {
 
     static {
         // todo: Initialize built-in tags like div and more here
-        register(new ElementEntry<>("div", DivElement.class, parent -> ElementBuilder.create(parent, DivElement::new, DivElement.class)));
-        register(new ElementEntry<>("p", ParagraphElement.class, parent -> ElementBuilder.create(parent, ParagraphElement::new, ParagraphElement.class)));
+        register(new ElementEntry<>("div", DivElement.class, parent -> ElementBuilder.create(parent, DivElement::new)));
+        register(new ElementEntry<>("p", ParagraphElement.class, parent -> ElementBuilder.create(parent, ParagraphElement::new)));
     }
 
     private ElementRegistry() {}
 
-    public static <E extends Node, B> void register(
+    public static <E extends Node> void register(
             ElementEntry<E, ?> entry
     ) {
         BY_NAME.put(entry.tag(), entry);

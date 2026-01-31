@@ -6,7 +6,6 @@ import de.leycm.html4j.htmj.element.RootElement;
 import de.leycm.html4j.htmj.registry.ElementEntry;
 
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
 
 public final class RootBuilder extends TreeBuilder<RootBuilder, DocumentBuilder, RootElement> {
     private boolean hasHead = false;

@@ -11,19 +11,17 @@ public class ElementBuilder<
         E extends Containing
         > extends TreeBuilder<ElementBuilder<P, E>, P, E> {
 
-    @Contract("_, _, _ -> new")
+    @Contract("_, _ -> new")
     public static <P extends NodeBuilder<?, ?>, E extends Containing> @NonNull ElementBuilder<P, E> create(
             final @NonNull P parent,
-            final @NonNull Supplier<E> constructor,
-            final @NonNull Class<E> elementClass) {
-        return new ElementBuilder<>(parent, constructor, elementClass);
+            final @NonNull Supplier<E> constructor) {
+        return new ElementBuilder<>(parent, constructor);
     }
 
     protected final Supplier<E> constructor;
 
     protected ElementBuilder(final @NonNull P parent,
-                             final @NonNull Supplier<E> constructor,
-                             final @NonNull Class<E> elementClass
+                             final @NonNull Supplier<E> constructor
     ) {
         super(parent);
         this.constructor = constructor;

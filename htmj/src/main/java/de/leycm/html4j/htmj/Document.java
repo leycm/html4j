@@ -9,7 +9,6 @@ import de.leycm.html4j.htmj.render.RenderContext;
 import de.leycm.html4j.htmj.render.RenderSystem;
 import lombok.NonNull;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public class Document implements NodeBuilder<Document, Node>, Element {
 
