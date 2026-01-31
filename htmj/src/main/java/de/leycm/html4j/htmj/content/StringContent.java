@@ -7,10 +7,10 @@ import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
-public abstract class Text implements Content {
+public abstract class StringContent implements Content {
     protected final @NonNull String content;
 
-    public Text(final @NonNull String content) {
+    public StringContent(final @NonNull String content) {
         this.content = content;
     }
 

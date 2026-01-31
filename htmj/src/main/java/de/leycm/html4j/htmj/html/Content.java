@@ -9,8 +9,8 @@ public interface Content extends Node {
     String content();
 
     @Override
-    default @NonNull RenderContext render(final @NonNull RenderContext context, final int indent) {
-        context.appendIndent().append(this.content());
+    default @NonNull RenderContext render(final @NonNull RenderContext context) {
+        context.append(this.content());
         return context;
     }
 

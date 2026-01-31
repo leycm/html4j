@@ -66,7 +66,7 @@ public class RenderContext implements Appendable, Serializable, Comparable<Rende
     }
 
     public RenderContext render(@NonNull Node node) {
-        node.render(this, currentIndent);
+        node.render(this);
         return this;
     }
 

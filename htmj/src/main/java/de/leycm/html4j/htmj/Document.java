@@ -1,38 +1,42 @@
 package de.leycm.html4j.htmj;
 
+import de.leycm.html4j.htmj.builder.DocumentBuilder;
+import de.leycm.html4j.htmj.builder.NodeBuilder;
 import de.leycm.html4j.htmj.element.Containing;
-import de.leycm.html4j.htmj.element.SelfClosing;
-import de.leycm.html4j.htmj.element.TextContent;
+import de.leycm.html4j.htmj.html.Element;
 import de.leycm.html4j.htmj.html.Node;
 import de.leycm.html4j.htmj.render.RenderContext;
 import de.leycm.html4j.htmj.render.RenderSystem;
+import lombok.NonNull;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public class Document {
-    private final Containing html;
+public class Document implements NodeBuilder<Document, Node>, Element {
+
+    private Containing html;
     private final RenderSystem renderSystem;
 
-    private Document(Containing html, RenderSystem renderSystem) {
-        this.html = html;
+    private Document(RenderSystem renderSystem) {
         this.renderSystem = renderSystem;
     }
 
-    public static DocumentBuilder html() {
-        return new DocumentBuilder();
+    public void setHtml(@NotNull Containing html) {
+        this.html = html;
+    }
+
+    @Contract(" -> new")
+    public static @NotNull DocumentBuilder builder() {
+        return new DocumentBuilder(new Document(RenderSystem.COMPACT));
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull DocumentBuilder builder(RenderSystem renderSystem) {
+        return new DocumentBuilder(new Document(renderSystem));
     }
 
     public String render() {
         RenderContext context = renderSystem.createContext();
-        // Add DOCTYPE and start HTML
-        context.append("<!DOCTYPE html>").appendLine();
-        
-        // Render HTML with proper indentation
-        html.render(context, 0);
-        
-        // Ensure there's a final newline
-        if (renderSystem.isPrettyPrint()) {
-            context.appendLine();
-        }
-        
+        render(context);
         return context.toString();
     }
 
@@ -41,107 +45,34 @@ public class Document {
         return render();
     }
 
-    public static class DocumentBuilder {
-        private Containing html;
-        private final RenderSystem renderSystem = RenderSystem.PRETTY;
-
-        public HeadBuilder head(String id, String classes) {
-            Containing head = new Containing("head");
-            this.html = new Containing("html", head);
-            return new HeadBuilder(this, head, id, classes);
-        }
-
-        public BodyBuilder body() {
-            Containing body = new Containing("body");
-            this.html = new Containing("html", body);
-            return new BodyBuilder(this, body);
-        }
-
-        public Document build() {
-            if (html == null) {
-                throw new IllegalStateException("Document must have at least a head or body");
-            }
-            return new Document(html, renderSystem);
-        }
+    @Override
+    public @NonNull String getTag() {
+        return "document"; // todo: may throw UnsupportedOperationException
     }
 
-    public static class HeadBuilder {
-        private final DocumentBuilder parent;
-        private final Containing head;
-
-        private HeadBuilder(DocumentBuilder parent, Containing head, String id, String classes) {
-            this.parent = parent;
-            this.head = head;
-            // todo: Add id and classes attributes
+    @Override
+    public @NonNull RenderContext render(@NonNull RenderContext context) {
+        context.append("<!DOCTYPE html>");
+        if (renderSystem.isPrettyPrint()) {
+            context.appendLine();
         }
 
-        public HeadBuilder title(String title) {
-            Containing titleElement = new Containing("title");
-            titleElement.add(new TextContent(title, true));
-            head.add(titleElement);
-            return this;
+        html.render(context);
+
+        if (renderSystem.isPrettyPrint()) {
+            context.appendLine();
         }
 
-        public HeadBuilder meta() {
-            head.add(new SelfClosing("meta"));
-            return this;
-        }
-
-        public DocumentBuilder close() {
-            return parent;
-        }
+        return context;
     }
 
-    public static class BodyBuilder {
-        private final DocumentBuilder parent;
-        private Containing currentElement;
-        private final Containing body;
+    @Override
+    public @NotNull Document close() {
+        return this;
+    }
 
-        private BodyBuilder(DocumentBuilder parent, Containing body) {
-            this.parent = parent;
-            this.body = body;
-            this.currentElement = body;
-        }
-
-        public BodyBuilder div(String id, String classes) {
-            Containing div = new Containing("div");
-            // todo: Add id and classes attributes
-            currentElement.add(div);
-            currentElement = div;
-            return this;
-        }
-
-        public BodyBuilder div() {
-            return div(null, null);
-        }
-
-        public BodyBuilder p() {
-            Containing p = new Containing("p");
-            currentElement.add(p);
-            currentElement = p;
-            return this;
-        }
-
-        public BodyBuilder paragraphOf(String text) {
-            return p().escaped(text).close();
-        }
-
-        public BodyBuilder escaped(String text) {
-            if (text != null) {
-                currentElement.add(new TextContent(text, true));
-            }
-            return this;
-        }
-
-        public BodyBuilder close() {
-            if (currentElement != body) {
-                currentElement = (Containing) currentElement.getParent();
-            }
-            return this;
-        }
-
-        public DocumentBuilder closeBody() {
-            return parent;
-        }
+    @Override
+    public @NotNull Node build() {
+        return this;
     }
 }

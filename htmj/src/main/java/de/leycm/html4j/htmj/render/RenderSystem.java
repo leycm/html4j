@@ -2,6 +2,7 @@ package de.leycm.html4j.htmj.render;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.apache.commons.text.StringEscapeUtils;
 
 @Builder
 public class RenderSystem {
@@ -14,7 +15,7 @@ public class RenderSystem {
 
     public static final RenderSystem COMPACT = new RenderSystem("", false, true, "");
 
-    public static final RenderSystem PRETTY = new RenderSystem(" ", true, true, "\n");
+    public static final RenderSystem PRETTY = new RenderSystem("  ", true, true, "\n");
 
     private RenderSystem(String indentString, boolean prettyPrint, boolean escapeContent, String lineSeparator) {
         this.indentString = indentString;
@@ -35,11 +36,7 @@ public class RenderSystem {
         if (content == null || !escapeContent) {
             return content;
         }
-        return content.replace("&", "&amp;")
-                     .replace("<", "&lt;")
-                     .replace(">", "&gt;")
-                     .replace("\"", "&quot;")
-                     .replace("'", "&#39;");
+        return StringEscapeUtils.escapeHtml4(content);
     }
 
     public String indentOf(int level) {

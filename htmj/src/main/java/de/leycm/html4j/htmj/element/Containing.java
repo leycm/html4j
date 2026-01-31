@@ -1,5 +1,6 @@
 package de.leycm.html4j.htmj.element;
 
+import de.leycm.html4j.htmj.html.Content;
 import de.leycm.html4j.htmj.html.Element;
 import de.leycm.html4j.htmj.html.Node;
 import de.leycm.html4j.htmj.render.RenderContext;
@@ -10,11 +11,10 @@ import lombok.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Containing implements Element {
-    private final @NonNull String tag;
-    private final @NonNull List<Node> children;
-    @Getter
-    private Containing parent;
+public abstract class Containing implements Element {
+    protected final @NonNull String tag;
+    protected final @NonNull List<Node> children;
+    @Getter private Containing parent;
 
     public Containing(
             final @NonNull String tag,
@@ -37,40 +37,44 @@ public class Containing implements Element {
     }
 
     @Override
-    public @NonNull RenderContext render(
-            final @NonNull RenderContext context,
-            final int indent
-    ) {
+    public @NonNull RenderContext render(final @NonNull RenderContext context) {
         boolean hasChildren = !children.isEmpty();
         boolean isPretty = context.getSystem().isPrettyPrint();
-        boolean hasTextOnly = hasChildren && children.stream().allMatch(c -> c instanceof TextContent);
-        
-        // Opening tag with indentation
-        context.appendIndent()
-               .append('<').append(tag).append('>');
+        boolean hasTextOnly = hasChildren && children.size() == 1
+                && (children.getFirst() instanceof Content);
+        // hasTextOnly is a special case where we want to avoid new lines and indentation to get something like:
+        // <tag>text</tag> instead of:
+        // <tag>
+        //   text
+        // </tag>
 
-        if (hasChildren) {
+
+        if (isPretty) {
+            context.appendIndent();
+        }
+        
+        context.append('<').append(tag).append('>');
+
+        if (hasTextOnly) {
+            children.getFirst().render(context);
+        } else if (hasChildren) {
             if (isPretty) {
-                context.appendLine();
-                
-                // Render children with proper indentation
+                context.appendLine().indent();
                 for (Node child : children) {
-                    context.appendIndent().append("  "); // 2 spaces for child indentation
-                    child.render(context, indent + 1);
+                    if (child instanceof Content) {
+                        context.appendIndent();
+                    }
+                    child.render(context);
                     context.appendLine();
                 }
-                
-                // Add closing tag with proper indentation
-                context.appendIndent();
+                context.unindent().appendIndent();
             } else {
-                // Compact mode - render all on one line
                 for (Node child : children) {
-                    child.render(context, 0);
+                    child.render(context);
                 }
             }
         }
-        
-        // Closing tag
+
         return context.append("</").append(tag).append('>');
     }
 
@@ -89,6 +93,7 @@ public class Containing implements Element {
 
     @Override
     public String toString() {
-        return render(RenderSystem.COMPACT.createContext(), 0).toString();
+        return render(RenderSystem.COMPACT.createContext()).toString();
     }
+
 }

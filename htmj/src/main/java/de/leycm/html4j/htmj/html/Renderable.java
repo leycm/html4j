@@ -6,6 +6,6 @@ import lombok.NonNull;
 public interface Renderable {
 
     @NonNull
-    RenderContext render(@NonNull RenderContext context, int indent);
+    RenderContext render(@NonNull RenderContext context);
 
 }

@@ -6,7 +6,7 @@ import de.leycm.html4j.htmj.render.RenderContext;
 import de.leycm.html4j.htmj.render.RenderSystem;
 import lombok.NonNull;
 
-public class SelfClosing implements Element {
+public abstract class SelfClosing implements Element {
     private final @NonNull String tag;
 
     public SelfClosing(final @NonNull String tag) {
@@ -19,11 +19,11 @@ public class SelfClosing implements Element {
 
     @Override
     public String toString() {
-        return render(RenderSystem.COMPACT.createContext(), 0).toString();
+        return render(RenderSystem.COMPACT.createContext()).toString();
     }
 
     @Override
-    public @NonNull RenderContext render(@NonNull RenderContext context, int indent) {
+    public @NonNull RenderContext render(@NonNull RenderContext context) {
         return context.appendIndent().append('<').append(tag).append(" />");
     }
 }
