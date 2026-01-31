@@ -1,7 +1,7 @@
 package de.leycm.html4j.htmj.builder;
 
 import de.leycm.html4j.htmj.element.BodyElement;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 public class BodyBuilder extends TreeBuilder<BodyBuilder, RootBuilder, BodyElement> {
 
@@ -10,7 +10,7 @@ public class BodyBuilder extends TreeBuilder<BodyBuilder, RootBuilder, BodyEleme
     }
 
     @Override
-    protected @NotNull BodyElement constructElement() {
+    protected @NonNull BodyElement constructElement() {
         return new BodyElement();
     }
 

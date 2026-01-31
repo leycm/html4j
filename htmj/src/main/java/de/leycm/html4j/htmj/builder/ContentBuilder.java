@@ -1,7 +1,7 @@
 package de.leycm.html4j.htmj.builder;
 
 import de.leycm.html4j.htmj.html.Content;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 public class ContentBuilder<
         P extends NodeBuilder<?, ?>,
@@ -17,12 +17,12 @@ public class ContentBuilder<
     }
 
     @Override
-    public @NotNull P close() {
+    public @NonNull P close() {
         return parent;
     }
 
     @Override
-    public @NotNull E build() {
+    public @NonNull E build() {
         return content;
     }
 

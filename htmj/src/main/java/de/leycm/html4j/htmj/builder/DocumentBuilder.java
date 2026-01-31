@@ -23,7 +23,7 @@ public final class DocumentBuilder implements NodeBuilder<Document, Document> {
     }
 
     @Override
-    public @NotNull Document close() {
+    public @NonNull Document close() {
         return build();
     }
 

@@ -13,4 +13,5 @@ public class HeadElement extends Containing {
     public HeadElement(final @NonNull Node... children) {
         super(NAME, children);
     }
+
 }
