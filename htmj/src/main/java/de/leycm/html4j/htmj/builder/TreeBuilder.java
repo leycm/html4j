@@ -5,13 +5,13 @@ import de.leycm.html4j.htmj.content.EscapedText;
 import de.leycm.html4j.htmj.content.RawText;
 import de.leycm.html4j.htmj.element.Containing;
 import de.leycm.html4j.htmj.element.DivElement;
+import de.leycm.html4j.htmj.element.ParagraphElement;
 import de.leycm.html4j.htmj.html.Content;
 import de.leycm.html4j.htmj.html.Node;
 import de.leycm.html4j.htmj.registry.ElementEntry;
 import de.leycm.html4j.htmj.registry.ElementRegistry;
 import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,21 +52,31 @@ public abstract class TreeBuilder<
     protected abstract @NonNull E constructElement();
 
 
-    public @NotNull <B extends TreeBuilder<B, SELF, DivElement>> B div() {
+    public @NonNull <B extends TreeBuilder<B, SELF, DivElement>> B div() {
         return element(DivElement.class);
     }
 
-    public @NotNull SELF escaped(String text) {
+    public @NonNull <B extends TreeBuilder<B, SELF, ParagraphElement>> B p() {
+        return element(ParagraphElement.class);
+    }
+
+    public @NonNull SELF p(String text) {
+        TreeBuilder<?, SELF, ParagraphElement> element = element(ParagraphElement.class);
+        element.escaped(text);
+        return self;
+    }
+
+    public @NonNull SELF escaped(String text) {
         return content(new ContentBuilder<>(self, new EscapedText(text)));
     }
 
     @ApiStatus.Experimental
-    public @NotNull SELF rawText(String text) {
+    public @NonNull SELF rawText(String text) {
         return content(new ContentBuilder<>(self, new RawText(text)));
     }
 
     @ApiStatus.Experimental
-    public @NotNull SELF comment(String text) {
+    public @NonNull SELF comment(String text) {
         return content(new ContentBuilder<>(self, new Comment(text)));
     }
 

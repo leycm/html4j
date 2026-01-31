@@ -9,7 +9,6 @@ import de.leycm.html4j.htmj.render.RenderContext;
 import de.leycm.html4j.htmj.render.RenderSystem;
 import lombok.NonNull;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public class Document implements NodeBuilder<Document, Node>, Element {
 
@@ -20,17 +19,17 @@ public class Document implements NodeBuilder<Document, Node>, Element {
         this.renderSystem = renderSystem;
     }
 
-    public void setHtml(@NotNull Containing html) {
+    public void setHtml(@NonNull Containing html) {
         this.html = html;
     }
 
     @Contract(" -> new")
-    public static @NotNull DocumentBuilder builder() {
+    public static @NonNull DocumentBuilder builder() {
         return new DocumentBuilder(new Document(RenderSystem.COMPACT));
     }
 
     @Contract("_ -> new")
-    public static @NotNull DocumentBuilder builder(RenderSystem renderSystem) {
+    public static @NonNull DocumentBuilder builder(RenderSystem renderSystem) {
         return new DocumentBuilder(new Document(renderSystem));
     }
 
@@ -47,7 +46,7 @@ public class Document implements NodeBuilder<Document, Node>, Element {
 
     @Override
     public @NonNull String getTag() {
-        return "document"; // todo: may throw UnsupportedOperationException
+        throw new UnsupportedOperationException("Document does not have a tag that can be retrieved");
     }
 
     @Override
@@ -67,12 +66,12 @@ public class Document implements NodeBuilder<Document, Node>, Element {
     }
 
     @Override
-    public @NotNull Document close() {
+    public @NonNull Document close() {
         return this;
     }
 
     @Override
-    public @NotNull Node build() {
+    public @NonNull Node build() {
         return this;
     }
 }

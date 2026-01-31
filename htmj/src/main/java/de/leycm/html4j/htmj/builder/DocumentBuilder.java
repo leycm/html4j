@@ -3,7 +3,6 @@ package de.leycm.html4j.htmj.builder;
 import de.leycm.html4j.htmj.Document;
 
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
 
 public final class DocumentBuilder implements NodeBuilder<Document, Document> {
 
@@ -23,7 +22,7 @@ public final class DocumentBuilder implements NodeBuilder<Document, Document> {
     }
 
     @Override
-    public @NotNull Document close() {
+    public @NonNull Document close() {
         return build();
     }
 
